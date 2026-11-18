@@ -1,6 +1,7 @@
 """Simulated ECUs. Each ECU owns its own bus connection and only talks to others through CAN frames."""
 from __future__ import annotations
 
+import sys
 import threading
 import time
 
@@ -11,6 +12,11 @@ from .uds import CONFIRMED, REQ_ID, TEST_FAILED, DiagServer
 
 DTC_PACK_OVERTEMP = 0x0A7E00   # P0A7E-00 Hybrid/EV battery pack over temperature
 DTC_LOST_COMM_VCU = 0xC10000   # U0100-00 Lost communication with VCU
+
+if sys.platform == "win32":
+    # Windows timers default to ~15.6 ms resolution, too coarse for a 20 ms cycle. Request 1 ms.
+    import ctypes
+    ctypes.windll.winmm.timeBeginPeriod(1)
 
 BMS_INIT, BMS_STANDBY, BMS_DRIVE, BMS_CHARGING, BMS_FAULT = range(5)
 

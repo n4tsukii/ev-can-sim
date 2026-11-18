@@ -13,7 +13,8 @@ import can
 from .codec import Codec
 from .ecu import BMS_FAULT
 
-TIMEOUT_FACTOR = 3          # message considered lost after 3 missed cycles
+TIMEOUT_FACTOR = 3          # message considered lost after 3 missed cycles...
+MIN_TIMEOUT_S = 0.1         # ...but never less than 100 ms (absorbs OS scheduling jitter)
 TEMP_WARNING_C = 55
 
 
@@ -92,7 +93,7 @@ class BusMonitor:
             now = time.time()
             with self.lock:
                 for fid, seen in self.last_seen.items():
-                    limit = self.known[fid].cycle_time / 1000 * TIMEOUT_FACTOR
+                    limit = max(self.known[fid].cycle_time / 1000 * TIMEOUT_FACTOR, MIN_TIMEOUT_S)
                     if fid not in self.timed_out and now - seen > limit:
                         self.timed_out.add(fid)
                         self._event("TIMEOUT", self.known[fid].name, f"no frame for > {limit * 1000:.0f} ms")

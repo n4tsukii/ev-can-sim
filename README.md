@@ -36,7 +36,7 @@ brakes using the `BrakePressure` it receives from the brake ECU.
 | **E2E protection** | 4-bit `AliveCounter` and CRC-8 SAE J1850 `Checksum` (byte 7) on every frame |
 | **Scheduling** | Deadline-based periodic TX threads. Measured cycle times match the DBC (20/50/100 ms) |
 | **BMS model** | SOC by coulomb counting, OCV-based pack voltage, I²R thermal model, state machine (STANDBY → DRIVE → FAULT) |
-| **Monitoring** | Checksum errors, counter jumps, timeouts (3 × cycle time) with recovery, temperature warning, BMS fault |
+| **Monitoring** | Checksum errors, counter jumps, timeouts (3 × cycle time, min. 100 ms) with recovery, temperature warning, BMS fault |
 | **Diagnostics (UDS)** | `0x10` session control, `0x22` ReadDataByIdentifier, `0x19 02` ReadDTCByStatusMask, `0x14` ClearDTC (extended session only), `0x3E` TesterPresent, negative responses (`0x11`, `0x12`, `0x13`, `0x31`, `0x7F`) |
 | **ISO-TP** | Single, First, Consecutive and Flow-Control frames. The 17-byte VIN is sent as a multi-frame response |
 | **DTCs** | `P0A7E-00` battery over-temperature, `U0100-00` lost communication with VCU, with testFailed/confirmed status bits |
