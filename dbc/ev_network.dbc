@@ -1,0 +1,51 @@
+VERSION ""
+
+
+NS_ :
+	CM_
+	BA_DEF_
+	BA_
+	VAL_
+	BA_DEF_DEF_
+
+BS_:
+
+BU_: BMS VCU BRK GW
+
+
+BO_ 256 BMS_Status: 8 BMS
+ SG_ SOC : 0|8@1+ (0.5,0) [0|100] "%" VCU,GW
+ SG_ PackVoltage : 8|16@1+ (0.1,0) [0|1000] "V" VCU,GW
+ SG_ PackCurrent : 24|16@1- (0.1,0) [-500|500] "A" VCU,GW
+ SG_ MaxCellTemp : 40|8@1+ (1,-40) [-40|125] "degC" VCU,GW
+ SG_ BMS_State : 48|4@1+ (1,0) [0|4] "" VCU,GW
+ SG_ AliveCounter : 52|4@1+ (1,0) [0|15] "" VCU,GW
+ SG_ Checksum : 56|8@1+ (1,0) [0|255] "" VCU,GW
+
+BO_ 512 VCU_Drive: 8 VCU
+ SG_ VehicleSpeed : 0|16@1+ (0.01,0) [0|250] "km/h" BMS,BRK,GW
+ SG_ AccelPedal : 16|8@1+ (0.4,0) [0|100] "%" BMS,GW
+ SG_ Gear : 24|2@1+ (1,0) [0|3] "" BMS,BRK,GW
+ SG_ AliveCounter : 52|4@1+ (1,0) [0|15] "" BMS,BRK,GW
+ SG_ Checksum : 56|8@1+ (1,0) [0|255] "" BMS,BRK,GW
+
+BO_ 768 BRK_Status: 8 BRK
+ SG_ BrakePressure : 0|16@1+ (0.1,0) [0|250] "bar" VCU,GW
+ SG_ BrakePedalPressed : 16|1@1+ (1,0) [0|1] "" VCU,GW
+ SG_ AliveCounter : 52|4@1+ (1,0) [0|15] "" VCU,GW
+ SG_ Checksum : 56|8@1+ (1,0) [0|255] "" VCU,GW
+
+
+CM_ BO_ 256 "Battery pack status. Checksum = CRC8 SAE-J1850 over bytes 0..6.";
+CM_ BO_ 512 "Vehicle control unit drive status.";
+CM_ BO_ 768 "Brake ECU status.";
+CM_ SG_ 256 PackCurrent "Positive = discharge, negative = regen/charge.";
+
+BA_DEF_ BO_ "GenMsgCycleTime" INT 0 10000;
+BA_DEF_DEF_ "GenMsgCycleTime" 0;
+BA_ "GenMsgCycleTime" BO_ 256 100;
+BA_ "GenMsgCycleTime" BO_ 512 20;
+BA_ "GenMsgCycleTime" BO_ 768 50;
+
+VAL_ 256 BMS_State 0 "INIT" 1 "STANDBY" 2 "DRIVE" 3 "CHARGING" 4 "FAULT" ;
+VAL_ 512 Gear 0 "P" 1 "R" 2 "N" 3 "D" ;
